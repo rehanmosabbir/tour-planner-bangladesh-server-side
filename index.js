@@ -1,6 +1,7 @@
 const express = require("express");
 const { MongoClient } = require("mongodb");
 const cors = require("cors");
+const ObjectId = require("mongodb").ObjectId;
 require("dotenv").config();
 
 const app = express();
@@ -23,6 +24,24 @@ async function run() {
   try {
     await client.connect();
     console.log("database connected successfully");
+
+    const database = client.db("tourPlannerBD");
+    const servicesCollection = database.collection("services");
+
+    // GET services API
+    app.get("/services", async (req, res) => {
+      const cursor = servicesCollection.find({});
+      const services = await cursor.toArray();
+      res.send(services);
+    });
+
+    app.get("/services/:id", async (req, res) => {
+      const id = req.params.id;
+      console.log("load user with id: ", id);
+      const query = { _id: ObjectId(id) };
+      const service = await servicesCollection.findOne(query);
+      res.send(service);
+    });
   } finally {
     // await client.close();
   }
