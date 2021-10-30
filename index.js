@@ -43,11 +43,43 @@ async function run() {
       const service = await servicesCollection.findOne(query);
       res.send(service);
     });
+
+    // POST services API
+    app.post("/services", async (req, res) => {
+      const service = req.body;
+      console.log("hitting the post", service);
+      const result = await servicesCollection.insertOne(service);
+      res.json(result);
+    });
+
+    // GET orders API with matched email
+    app.get("/orders/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const cursor = ordersCollection.find(query);
+      const orders = await cursor.toArray();
+      res.send(orders);
+    });
+    // GET all orders API
+    app.get("/orders", async (req, res) => {
+      const cursor = ordersCollection.find({});
+      const orders = await cursor.toArray();
+      res.send(orders);
+    });
     // POST order API
     app.post("/orders", async (req, res) => {
       const order = req.body;
       console.log("hitting the post", order);
       const result = await ordersCollection.insertOne(order);
+      res.json(result);
+    });
+
+    // DELETE order API
+    app.delete("/orders/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await ordersCollection.deleteOne(query);
+      console.log("deleting order with id", id);
       res.json(result);
     });
   } finally {
