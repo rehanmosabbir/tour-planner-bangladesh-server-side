@@ -27,6 +27,7 @@ async function run() {
 
     const database = client.db("tourPlannerBD");
     const servicesCollection = database.collection("services");
+    const ordersCollection = database.collection("orders");
 
     // GET services API
     app.get("/services", async (req, res) => {
@@ -41,6 +42,13 @@ async function run() {
       const query = { _id: ObjectId(id) };
       const service = await servicesCollection.findOne(query);
       res.send(service);
+    });
+    // POST order API
+    app.post("/orders", async (req, res) => {
+      const order = req.body;
+      console.log("hitting the post", order);
+      const result = await ordersCollection.insertOne(order);
+      res.json(result);
     });
   } finally {
     // await client.close();
