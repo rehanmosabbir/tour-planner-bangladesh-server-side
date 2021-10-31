@@ -74,6 +74,27 @@ async function run() {
       res.json(result);
     });
 
+    // UPDATE order API
+    app.put("/orders/:id", async (req, res) => {
+      const id = req.params.id;
+      const updatedOrder = req.body;
+      console.log(updatedOrder, id);
+      const filter = { _id: ObjectId(id) };
+      const options = { upsert: true };
+
+      const updateDoc = {
+        $set: {
+          status: updatedOrder.status,
+        },
+      };
+      const result = await ordersCollection.updateOne(
+        filter,
+        updateDoc,
+        options
+      );
+      res.json(result);
+    });
+
     // DELETE order API
     app.delete("/orders/:id", async (req, res) => {
       const id = req.params.id;
